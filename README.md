@@ -47,11 +47,14 @@ El documento incluye la descripción de la situación, las unidades de ejecució
 
 ## Estructura actual del repositorio
 
-| Ubicación | Contenido |
-| --- | --- |
-| `README.md` | Descripción del proyecto, integrantes, funcionamiento propuesto y estado actual. |
-| `docs/` | Documentación del proyecto. |
-| `docs/Restaurante con Gestión de Pedidos.pdf` | Reporte de la fase de análisis. |
+```text
+restaurante/
+├── README.md                              # Descripción, integrantes y estado del proyecto
+└── docs/                                  # Documentación del proyecto
+    └── Restaurante con Gestión de Pedidos.pdf  # Fase de análisis y comparación de modelos
+```
+
+Esta estructura se actualizará conforme se incorporen el código, las pruebas y los resultados del proyecto.
 
 ## Estado del proyecto
 
