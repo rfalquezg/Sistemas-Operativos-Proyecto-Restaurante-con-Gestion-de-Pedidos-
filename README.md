@@ -33,10 +33,26 @@ El proyecto permitirá aplicar los siguientes conceptos:
 - **Sincronización:** coordinar las tareas que necesitan utilizar un mismo recurso.
 - **Gestión de recursos compartidos:** organizar el uso de utensilios y equipos disponibles en la cocina.
 
+## Fase de análisis
+
+Se compararon los modelos de **Memoria Compartida** y **Paso de Mensajes** para coordinar a los cocineros y gestionar el inventario de ingredientes.
+
+Se seleccionó **Memoria Compartida** para una aplicación que funciona en un solo equipo, con hilos que representan a los cocineros. La extracción de pedidos y la verificación y reserva de ingredientes se protegerán mediante bloqueos, que se liberarán antes de preparar los platos.
+
+## Documentación
+
+[Consultar la fase de análisis en PDF](docs/Restaurante%20con%20Gesti%C3%B3n%20de%20Pedidos.pdf)
+
+El documento incluye la descripción de la situación, las unidades de ejecución, el recurso compartido principal, los datos y resultados esperados, la tabla comparativa, la conclusión del modelo seleccionado y la bibliografía.
+
+## Estructura actual del repositorio
+
+| Ubicación | Contenido |
+| --- | --- |
+| `README.md` | Descripción del proyecto, integrantes, funcionamiento propuesto y estado actual. |
+| `docs/` | Documentación del proyecto. |
+| `docs/Restaurante con Gestión de Pedidos.pdf` | Reporte de la fase de análisis. |
+
 ## Estado del proyecto
 
-El proyecto se encuentra en la etapa inicial de organización y documentación. La implementación se desarrollará en las siguientes etapas.
-
-## Repositorio
-
-[Ver el proyecto en GitHub](https://github.com/rfalquezg/Sistemas-Operativos-Proyecto-Restaurante-con-Gesti-n-de-Pedidos-)
+La fase de análisis está documentada y el modelo de comunicación seleccionado es Memoria Compartida. La implementación se desarrollará en las siguientes etapas.
