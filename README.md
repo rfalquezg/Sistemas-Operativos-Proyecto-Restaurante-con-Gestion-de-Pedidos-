@@ -123,12 +123,15 @@ La presentación explica los cocineros como hilos, los recursos compartidos, los
 ```text
 restaurante/
 ├── README.md
+├── main.py
 └── docs/
     ├── Restaurante con Gestión de Pedidos.pdf
-    └── Presentacion_Gestion de pedidos en Restaurantes.pptx
+    ├── Presentacion_Gestion de pedidos en Restaurantes.pptx
+    ├── avance_implementacion.md
+    └── evidencia_ejecucion.txt
 ```
 
-Esta estructura se actualizará conforme se incorporen el código, las pruebas y los resultados del proyecto.
+Esta estructura se actualizará conforme se incorporen más funcionalidades, pruebas y resultados del proyecto.
 
 ## Estado del proyecto
 
@@ -136,4 +139,16 @@ Actualmente se encuentran documentadas las fases de **análisis, planificación 
 
 El modelo seleccionado es **Memoria Compartida** y se utilizarán hilos para representar a los cocineros, junto con mecanismos de sincronización para proteger los recursos compartidos.
 
-La implementación de las clases, los hilos y las pruebas del programa se desarrollará en las siguientes etapas.
+Se realizó un primer avance de implementación para demostrar la condición de carrera y su solución con un mutex. Las funcionalidades completas del restaurante se desarrollarán en las siguientes etapas.
+
+## Primer avance de implementación concurrente
+
+Se agregó una primera simulación en Python que compara las representaciones **básica (int)** y **compleja (dict)** mediante dos clases de inventario. En cada escenario, dos hilos que representan cocineros usan **la misma instancia** del inventario e intentan reservar la última unidad.
+
+Las dos versiones se ejecutan **sin sincronización** para demostrar la condición de carrera y **con un mutex (`threading.Lock`)** para evitar reservas duplicadas. Por ahora es una prueba inicial; la integración de recetas, pedidos y preparación completa queda para una etapa posterior.
+
+- [Código del primer avance](main.py)
+- [Explicación de la sección crítica y tabla de resultados](docs/avance_implementacion.md)
+- [Evidencia de ejecución](docs/evidencia_ejecucion.txt)
+
+Para ejecutar en PyCharm, abre `main.py` y presiona **Run**. También puedes usar `python main.py` desde la terminal. El programa usa únicamente el módulo `threading` de Python.
