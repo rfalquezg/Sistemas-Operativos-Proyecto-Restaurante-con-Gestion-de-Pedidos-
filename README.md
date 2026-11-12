@@ -139,16 +139,56 @@ Actualmente se encuentran documentadas las fases de **análisis, planificación 
 
 El modelo seleccionado es **Memoria Compartida** y se utilizarán hilos para representar a los cocineros, junto con mecanismos de sincronización para proteger los recursos compartidos.
 
-Se realizó un primer avance de implementación para demostrar la condición de carrera y su solución con un mutex. Las funcionalidades completas del restaurante se desarrollarán en las siguientes etapas.
+Se implementó un primer avance con las clases Inventario, Pedido, GestorPedidos y Cocinero para demostrar la condición de carrera y su solución con un mutex. La implementación completa continúa en desarrollo.
 
-## Primer avance de implementación concurrente
+## Primer avance de implementación
 
-Se agregó una primera simulación en Python que compara las representaciones **básica (int)** y **compleja (dict)** mediante dos clases de inventario. En cada escenario, dos hilos que representan cocineros usan **la misma instancia** del inventario e intentan reservar la última unidad.
+### Situación
 
-Las dos versiones se ejecutan **sin sincronización** para demostrar la condición de carrera y **con un mutex (`threading.Lock`)** para evitar reservas duplicadas. Por ahora es una prueba inicial; la integración de recetas, pedidos y preparación completa queda para una etapa posterior.
+En el restaurante, los **cocineros son los hilos**. En esta primera prueba, dos cocineros intentan reservar la última unidad disponible. Se prueba un ingrediente (pollo) y un plato preparado en masa (lasaña).
+
+### Dos representaciones y clases
+
+Se mantiene la clase **`Inventario`** con dos formas de guardar los datos, como se planteó en el documento y la presentación:
+
+- **Tipo básico (`int`):** variables enteras separadas, como `pollo = 1`, `carne = 8`, `arroz = 10` y `papas = 12`.
+- **Tipo complejo (`dict`):** un diccionario de ingredientes con pollo, arroz, carne y papas, además de `platos_preparados = {"lasana": 1}`.
+
+También se usan las clases **`Pedido`**, **`GestorPedidos`** y **`Cocinero`**. En cada prueba, los dos hilos de cocineros reciben el **mismo objeto `Inventario`** y el mismo gestor de pedidos.
+
+### Sección crítica
+
+La sección crítica está señalada con comentarios en los métodos **`_descontar_ingrediente()`** y **`_descontar_plato()`**. Contiene las operaciones de **consultar**, **validar** la disponibilidad y **actualizar** el recurso.
+
+Sin sincronización, los dos cocineros pueden leer que hay una unidad disponible y ambos confirmar la reserva antes de que se actualice correctamente el inventario. En la prueba, el stock termina en cero, pero aparecen dos pedidos atendidos: esa es la inconsistencia.
+
+### Mecanismo elegido
+
+Se utiliza **`threading.Lock()` (mutex)** porque la consulta, validación y actualización deben realizarse de forma exclusiva. El bloqueo se adquiere antes de estas operaciones y se libera al terminar el bloque `with self.lock:`. La lista de pedidos pendientes también se protege con un bloqueo.
+
+Para mostrar el conflicto de forma reproducible, **solo en la prueba sin mutex del inventario** se utiliza `threading.Barrier(2)`, que permite que los dos hilos lean antes de descontar. Esta barrera sirve para demostrar el error y no protege el inventario.
+
+### Tabla de resultados
+
+| Recurso | Prueba | Stock inicial | Reservas confirmadas | Stock final | Resultado |
+|---|---|---:|---:|---:|---|
+| Entero (pollo) | Sin Lock | 1 | 2 | 0 | Reserva duplicada |
+| Entero (pollo) | Con Lock | 1 | 1 | 0 | Correcto |
+| Diccionario (lasaña lista) | Sin Lock | 1 | 2 | 0 | Reserva duplicada |
+| Diccionario (lasaña lista) | Con Lock | 1 | 1 | 0 | Correcto |
+
+### Evidencia y ejecución
+
+El proyecto se ejecutó en PyCharm. Desde una terminal también se puede ejecutar así:
+
+```bash
+python main.py
+```
+
+La consola mostró dos reservas para una sola unidad en las versiones sin Lock y una sola reserva en las versiones con Lock. Como son hilos, el orden de los mensajes puede variar y algunas impresiones pueden aparecer juntas.
 
 - [Código del primer avance](main.py)
-- [Explicación de la sección crítica y tabla de resultados](docs/avance_implementacion.md)
-- [Evidencia de ejecución](docs/evidencia_ejecucion.txt)
+- [Documentación de la sección crítica y resultados](docs/avance_implementacion.md)
+- [Salida de ejecución compartida por el equipo](docs/evidencia_ejecucion.txt)
 
-Para ejecutar en PyCharm, abre `main.py` y presiona **Run**. También puedes usar `python main.py` desde la terminal. El programa usa únicamente el módulo `threading` de Python.
+Este es un **primer avance académico**, no la versión final. Aún falta integrar recetas completas, más platos y el manejo general de los pedidos.
