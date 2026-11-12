@@ -1,30 +1,46 @@
 --- BASICO / SIN LOCK ---
-Cocinero 2: reservo una porcion de pollo
-Cocinero 1: reservo una porcion de pollo
+[INICIO] Cocinero 1
+[INICIO] Cocinero 2
+Cocinero 2: pedido 2 atendidoCocinero 1: pedido 1 atendido
+
+[FIN] Cocinero 2[FIN] Cocinero 1
+
 Reservas confirmadas: 2
 Cantidad final: 0
-PROBLEMA: dos reservas de una sola unidad
+PROBLEMA: dos cocineros reservaron la misma ultima unidad
 
 --- BASICO / CON LOCK ---
-Cocinero 1: reservo una porcion de pollo
-Cocinero 2: no hay pollo
+[INICIO] Cocinero 1
+Cocinero 1: pedido 1 atendido
+[FIN] Cocinero 1
+[INICIO] Cocinero 2
+Cocinero 2: pedido 2 sin disponibilidad
+[FIN] Cocinero 2
 Reservas confirmadas: 1
 Cantidad final: 0
-RESULTADO: no hay reserva duplicada
+CORRECTO: no hubo reserva duplicada
 
 --- COMPLEJO / SIN LOCK ---
-Cocinero 2: reservo una unidad de lasana_lista
-Cocinero 1: reservo una unidad de lasana_lista
+[INICIO] Cocinero 1
+[INICIO] Cocinero 2
+Cocinero 2: pedido 2 atendidoCocinero 1: pedido 1 atendido
+
+[FIN] Cocinero 1[FIN] Cocinero 2
+
 Reservas confirmadas: 2
 Cantidad final: 0
-PROBLEMA: dos reservas de una sola unidad
+PROBLEMA: dos cocineros reservaron la misma ultima unidad
 
 --- COMPLEJO / CON LOCK ---
-Cocinero 1: reservo una unidad de lasana_lista
-Cocinero 2: no hay lasana_lista
+[INICIO] Cocinero 1
+Cocinero 1: pedido 1 atendido
+[FIN] Cocinero 1
+[INICIO] Cocinero 2
+Cocinero 2: pedido 2 sin disponibilidad
+[FIN] Cocinero 2
 Reservas confirmadas: 1
 Cantidad final: 0
-RESULTADO: no hay reserva duplicada
+CORRECTO: no hubo reserva duplicada
 
-Nota: la salida muestra un escenario reproducible con Barrier(2).
-El orden de mensajes de los cocineros puede variar.
+Evidencia proporcionada por el equipo desde PyCharm.
+Los mensajes de algunos hilos aparecen pegados porque las impresiones concurrentes se intercalan.
