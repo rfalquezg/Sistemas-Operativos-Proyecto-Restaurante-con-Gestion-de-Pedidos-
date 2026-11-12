@@ -1,0 +1,30 @@
+--- BASICO / SIN LOCK ---
+Cocinero 2: reservo una porcion de pollo
+Cocinero 1: reservo una porcion de pollo
+Reservas confirmadas: 2
+Cantidad final: 0
+PROBLEMA: dos reservas de una sola unidad
+
+--- BASICO / CON LOCK ---
+Cocinero 1: reservo una porcion de pollo
+Cocinero 2: no hay pollo
+Reservas confirmadas: 1
+Cantidad final: 0
+RESULTADO: no hay reserva duplicada
+
+--- COMPLEJO / SIN LOCK ---
+Cocinero 2: reservo una unidad de lasana_lista
+Cocinero 1: reservo una unidad de lasana_lista
+Reservas confirmadas: 2
+Cantidad final: 0
+PROBLEMA: dos reservas de una sola unidad
+
+--- COMPLEJO / CON LOCK ---
+Cocinero 1: reservo una unidad de lasana_lista
+Cocinero 2: no hay lasana_lista
+Reservas confirmadas: 1
+Cantidad final: 0
+RESULTADO: no hay reserva duplicada
+
+Nota: la salida muestra un escenario reproducible con Barrier(2).
+El orden de mensajes de los cocineros puede variar.
