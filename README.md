@@ -122,6 +122,7 @@ La presentación explica los cocineros como hilos, los recursos compartidos, los
 
 ```text
 restaurante/
+├── .gitignore
 ├── README.md
 ├── main.py
 └── docs/
@@ -130,6 +131,8 @@ restaurante/
     ├── avance_implementacion.md
     └── evidencia_ejecucion.txt
 ```
+
+En IntelliJ/PyCharm, el archivo del ZIP se llama `Gestion De Pedidos.py`. Para mantener un punto de entrada sencillo en GitHub se publica como `main.py`, con las mismas clases y pruebas. Las carpetas locales `.venv/` y `.idea/` no se suben porque contienen configuraciones del entorno de desarrollo.
 
 Esta estructura se actualizará conforme se incorporen más funcionalidades, pruebas y resultados del proyecto.
 
@@ -149,7 +152,7 @@ En el restaurante, los **cocineros son los hilos**. En esta primera prueba, dos 
 
 ### Dos representaciones y clases
 
-Se mantiene la clase **`Inventario`** con dos formas de guardar los datos, como se planteó en el documento y la presentación:
+En la versión final del **Avance 1** se mantiene la clase **`Inventario`** con dos formas de guardar los datos, como se planteó en el documento y la presentación:
 
 - **Tipo básico (`int`):** variables enteras separadas, como `pollo = 1`, `carne = 8`, `arroz = 10` y `papas = 12`.
 - **Tipo complejo (`dict`):** un diccionario de ingredientes con pollo, arroz, carne y papas, además de `platos_preparados = {"lasana": 1}`.
@@ -179,13 +182,13 @@ Para mostrar el conflicto de forma reproducible, **solo en la prueba sin mutex d
 
 ### Evidencia y ejecución
 
-El proyecto se ejecutó en PyCharm. Desde una terminal también se puede ejecutar así:
+El programa se ejecutó en IntelliJ/PyCharm y terminó con **exit code 0**. Desde una terminal también se puede ejecutar así:
 
 ```bash
 python main.py
 ```
 
-La consola mostró dos reservas para una sola unidad en las versiones sin Lock y una sola reserva en las versiones con Lock. Como son hilos, el orden de los mensajes puede variar y algunas impresiones pueden aparecer juntas.
+La salida real compartida por el equipo confirma **2 reservas sin mutex** y **1 reserva con mutex** tanto para el pollo como para la lasaña preparada, con stock final de 0 en todas las pruebas. La consola terminó con `Process finished with exit code 0`. Como son hilos, el orden de los mensajes puede variar y algunas impresiones pueden aparecer juntas.
 
 - [Código del primer avance](main.py)
 - [Documentación de la sección crítica y resultados](docs/avance_implementacion.md)

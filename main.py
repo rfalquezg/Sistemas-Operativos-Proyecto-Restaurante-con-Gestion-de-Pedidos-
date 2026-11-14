@@ -1,27 +1,27 @@
 import threading
 
 
-# Clase que guarda los ingredientes del restaurante.
+# Clase que administra los recursos del restaurante.
 class Inventario:
     def __init__(self, tipo):
         self.tipo = tipo
-        self.lock = threading.Lock()
+        self.lock = threading.Lock()  # Mutex para proteger el inventario.
 
         if tipo == "basico":
-            # Tipo basico: cantidades separadas con variables enteras.
+            # Tipo basico: cada ingrediente es una variable entera.
             self.pollo = 1
             self.carne = 8
             self.arroz = 10
             self.papas = 12
         else:
-            # Tipo complejo: todos los ingredientes en un diccionario.
+            # Tipo complejo: los ingredientes se guardan en un diccionario.
             self.ingredientes = {
                 "pollo": 5,
                 "arroz": 10,
                 "carne": 8,
                 "papas": 12
             }
-            # Tambien tenemos platos que ya estan preparados en masa.
+            # Platos preparados en masa y listos para entregar.
             self.platos_preparados = {"lasana": 1}
 
     def consultar_ingredientes(self, nombre):
@@ -34,7 +34,7 @@ class Inventario:
 
     def reservar_ingredientes(self, nombre, cantidad, usar_lock, barrera=None):
         if usar_lock:
-            # El Lock se adquiere aqui y se libera al salir del with.
+            # El mutex se adquiere antes de la seccion critica.
             with self.lock:
                 return self._descontar_ingrediente(nombre, cantidad)
         return self._descontar_ingrediente(nombre, cantidad, barrera)
@@ -44,7 +44,7 @@ class Inventario:
         disponible = self.consultar_ingredientes(nombre)  # 1. Consultar
         alcanza = disponible >= cantidad                 # 2. Validar
         if barrera is not None:
-            barrera.wait()  # Solo para provocar el conflicto en la demostracion.
+            barrera.wait()  # Solo para demostrar el problema sin mutex.
         if alcanza:
             if self.tipo == "basico":
                 setattr(self, nombre, disponible - cantidad)  # 3. Actualizar
@@ -87,7 +87,7 @@ class Pedido:
         self.estado = nuevo_estado
 
 
-# Clase que administra los pedidos pendientes.
+# Clase encargada de administrar los pedidos pendientes.
 class GestorPedidos:
     def __init__(self, pedidos):
         self.pedidos = pedidos
@@ -98,7 +98,7 @@ class GestorPedidos:
             self.pedidos.append(pedido)
 
     def obtener_pedido(self):
-        # Se protege la lista para no entregar el mismo pedido dos veces.
+        # Se usa un mutex para no asignar el mismo pedido dos veces.
         with self.lock:
             if self.pedidos:
                 return self.pedidos.pop(0)
@@ -109,7 +109,7 @@ class GestorPedidos:
             return len(self.pedidos)
 
 
-# Cada cocinero es un hilo que atiende un pedido.
+# Cada cocinero es un hilo que atiende pedidos del restaurante.
 class Cocinero(threading.Thread):
     def __init__(self, nombre, inventario, gestor_pedidos, usar_lock, barrera=None):
         super().__init__()
@@ -129,12 +129,12 @@ class Cocinero(threading.Thread):
 
     def preparar_pedido(self, pedido):
         if pedido.plato == "lasana":
-            # La lasana ya estaba preparada en masa.
+            # Plato que ya se preparo en masa.
             self.resultado = self.inventario.reservar_plato_preparado(
                 "lasana", self.usar_lock, self.barrera
             )
         else:
-            # En la prueba basica se necesita una porcion de pollo.
+            # Para la prueba basica se reserva una porcion de pollo.
             self.resultado = self.inventario.reservar_ingredientes(
                 "pollo", 1, self.usar_lock, self.barrera
             )
@@ -150,13 +150,13 @@ class Cocinero(threading.Thread):
 def probar(tipo, usar_lock):
     print(f"\n--- {tipo.upper()} / {'CON LOCK' if usar_lock else 'SIN LOCK'} ---")
 
-    # Los dos cocineros reciben EL MISMO inventario y el mismo gestor.
+    # Los dos cocineros usan las mismas instancias de Inventario y GestorPedidos.
     inventario = Inventario(tipo)
     nombre_plato = "pollo" if tipo == "basico" else "lasana"
     pedidos = [Pedido(1, nombre_plato), Pedido(2, nombre_plato)]
     gestor = GestorPedidos(pedidos)
 
-    # Sin Lock, ambos hilos leen antes de descontar para mostrar el problema.
+    # Sin mutex usamos Barrier para que ambos consulten antes de descontar.
     barrera = None if usar_lock else threading.Barrier(2)
     cocineros = [
         Cocinero("Cocinero 1", inventario, gestor, usar_lock, barrera),

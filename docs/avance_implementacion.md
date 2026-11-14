@@ -42,8 +42,8 @@ Para reproducir el problema, **solo en las pruebas sin mutex sobre el inventario
 
 ## Evidencia y ejecución
 
-El equipo ejecutó el primer avance en PyCharm con `main.py`. También puede ejecutarse desde consola con `python main.py`.
+El equipo ejecutó la versión final del Avance 1 en IntelliJ/PyCharm con el archivo local `Gestion De Pedidos.py` (publicado como `main.py` en GitHub). También puede ejecutarse desde consola con `python main.py`. La ejecución terminó con `Process finished with exit code 0`.
 
-Se conserva la salida proporcionada por el equipo en [evidencia_ejecucion.txt](evidencia_ejecucion.txt). El orden de los mensajes y algunas líneas de impresión pueden variar por concurrencia.
+Se conserva la salida real proporcionada por el equipo en [evidencia_ejecucion.txt](evidencia_ejecucion.txt), incluyendo las cuatro pruebas y el código de salida 0. El orden de los mensajes y algunas líneas de impresión pueden variar por concurrencia.
 
 Este es un **primer avance académico**, no la aplicación terminada. Falta integrar recetas completas, cantidades variables, más platos preparados y la atención real de pedidos.

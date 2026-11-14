@@ -23,10 +23,10 @@ CORRECTO: no hubo reserva duplicada
 --- COMPLEJO / SIN LOCK ---
 [INICIO] Cocinero 1
 [INICIO] Cocinero 2
-Cocinero 2: pedido 2 atendidoCocinero 1: pedido 1 atendido
-
-[FIN] Cocinero 1[FIN] Cocinero 2
-
+Cocinero 2: pedido 2 atendido
+[FIN] Cocinero 2
+Cocinero 1: pedido 1 atendido
+[FIN] Cocinero 1
 Reservas confirmadas: 2
 Cantidad final: 0
 PROBLEMA: dos cocineros reservaron la misma ultima unidad
@@ -42,5 +42,4 @@ Reservas confirmadas: 1
 Cantidad final: 0
 CORRECTO: no hubo reserva duplicada
 
-Evidencia proporcionada por el equipo desde PyCharm.
-Los mensajes de algunos hilos aparecen pegados porque las impresiones concurrentes se intercalan.
+Process finished with exit code 0
