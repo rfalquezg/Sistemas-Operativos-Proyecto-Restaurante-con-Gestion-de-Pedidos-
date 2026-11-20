@@ -2,7 +2,7 @@ import threading
 # Cada cocinero es un hilo que atiende un pedido.
 class Cocinero(threading.Thread):
     def __init__(self, nombre, inventario, gestor, con_mutex, barrera=None):
-        super().__init__()
+        super().__init__(name=nombre)
         self.nombre = nombre
         self.inventario = inventario
         self.gestor = gestor
