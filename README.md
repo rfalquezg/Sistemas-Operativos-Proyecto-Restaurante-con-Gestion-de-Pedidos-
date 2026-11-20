@@ -129,10 +129,19 @@ restaurante/
 ├── Pedido.py
 ├── Gestor_Pedidos.py
 ├── Cocinero.py
+├── simulacion.py
+├── app_web.py
+├── web/
+│   ├── index.html
+│   ├── estilos.css
+│   └── interfaz.js
+├── tests/
+│   └── test_simulacion.py
 └── docs/
     ├── Restaurante con Gestión de Pedidos.pdf
     ├── Presentacion_Gestion de pedidos en Restaurantes.pptx
     ├── avance_implementacion.md
+    ├── interfaz_web.md
     └── evidencia_ejecucion.txt
 ```
 
@@ -203,3 +212,33 @@ La salida compartida por el equipo confirma **2 reservas sin mutex** y **1 reser
 - [Salida de ejecución compartida por el equipo](docs/evidencia_ejecucion.txt)
 
 Este es un **primer avance académico**, no la versión final. Aún falta integrar recetas completas, más platos y el manejo general de los pedidos.
+
+## Avance 2: Interfaz web interactiva
+
+Se incluyo una pagina web local para elegir las dos representaciones del recurso (entero y diccionario) y comparar su comportamiento **con y sin mutex**. Es posible configurar de **2 a 6 cocineros** y de **0 a 10 unidades** disponibles.
+
+La pagina muestra cada hilo, la operacion de reserva, el recurso **antes**, el **resultado**, el recurso **despues**, el stock final, las reservas confirmadas y si hubo una condicion de carrera. Tambien permite comparar las cuatro versiones con un solo boton.
+
+### Como ejecutar la interfaz
+
+No se requieren librerias adicionales; solo Python 3.
+
+```bash
+python app_web.py
+```
+
+Despues abre **http://localhost:8000** en tu navegador. Para cerrar el servidor presiona Ctrl+C. Se conserva la version por consola con `python main.py`.
+
+### Archivos de este avance
+
+- [Interfaz web (servidor)](app_web.py)
+- [Simulacion concurrente](simulacion.py)
+- [Pagina principal](web/index.html)
+- [Estilos](web/estilos.css)
+- [Interaccion de la pagina](web/interfaz.js)
+- [Documentacion de la interfaz](docs/interfaz_web.md)
+- [Pruebas](tests/test_simulacion.py)
+
+Para probar desde terminal: `python -m unittest discover -s tests`.
+
+**Estado:** Avance 1 terminado y Avance 2 con interfaz web local implementada. El restaurante completo sigue en desarrollo.

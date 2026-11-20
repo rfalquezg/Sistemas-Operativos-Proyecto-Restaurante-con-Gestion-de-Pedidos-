@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Restaurante · Laboratorio de concurrencia</title>
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <main class="contenedor">
+    <header class="encabezado">
+      <span class="etiqueta">SISTEMAS OPERATIVOS · GRUPO 6</span>
+      <h1>Restaurante <span>con Gestión de Pedidos</span></h1>
+      <p>Laboratorio interactivo de hilos, recursos compartidos y sincronización con mutex.</p>
+    </header>
+
+    <section class="distribucion">
+      <form class="panel configuracion" id="formulario">
+        <div class="panel-titulo"><span>01</span><h2>Configura la simulación</h2></div>
+        <label>Representación del recurso
+          <select id="tipo">
+            <option value="basico">Básico · variable entera (pollo)</option>
+            <option value="complejo">Complejo · diccionario (lasaña)</option>
+          </select>
+        </label>
+        <label>Sincronización
+          <select id="mutex">
+            <option value="false">Sin mutex · condición de carrera</option>
+            <option value="true">Con mutex · Lock</option>
+          </select>
+        </label>
+        <label>Cantidad de cocineros (hilos)
+          <input id="cocineros" type="number" min="2" max="6" value="2">
+        </label>
+        <label>Stock inicial del recurso
+          <input id="stock" type="number" min="0" max="10" value="1">
+        </label>
+        <button class="boton principal" type="submit">▶ Ejecutar escenario</button>
+        <button class="boton secundario" type="button" id="comparar">Comparar las 4 versiones</button>
+        <p class="ayuda">Para observar la carrera, usa 2 cocineros y 1 unidad. La barrera solo reproduce el conflicto; el mutex es el mecanismo que lo evita.</p>
+      </form>
+
+      <section class="panel resultado">
+        <div class="panel-titulo"><span>02</span><h2>Resultado del escenario</h2></div>
+        <div id="estado" class="estado neutro" role="status">Selecciona una configuración y ejecuta la prueba.</div>
+        <div class="numeros">
+          <div><span>Stock inicial</span><strong id="inicial">—</strong></div>
+          <div><span>Reservas</span><strong id="reservas">—</strong></div>
+          <div><span>Stock final</span><strong id="final">—</strong></div>
+        </div>
+        <div class="barra-titulo"><h3>Operaciones de los hilos</h3><small id="detalle">Consulta → validación → actualización</small></div>
+        <div class="tabla-scroll">
+          <table>
+            <thead><tr><th>Hilo</th><th>Operación solicitada</th><th>Antes</th><th>Resultado</th><th>Después</th></tr></thead>
+            <tbody id="movimientos"><tr><td colspan="5" class="vacio">Aquí aparecerá la ejecución.</td></tr></tbody>
+          </table>
+        </div>
+        <div class="info">
+          <strong>¿Qué significa?</strong>
+          <p id="explicacion">El recurso compartido debe descontarse una sola vez por cada reserva confirmada.</p>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel comparacion" id="comparacion" hidden>
+      <div class="panel-titulo"><span>03</span><h2>Comparación de las cuatro versiones</h2></div>
+      <p>Las cuatro pruebas usan la cantidad de cocineros y el stock que configuraste.</p>
+      <div class="tarjetas" id="tarjetas"></div>
+    </section>
+
+    <footer>Proyecto académico · UEES · Grupo 6 · Python y memoria compartida</footer>
+  </main>
+  <script src="/interfaz.js"></script>
+</body>
+</html>
