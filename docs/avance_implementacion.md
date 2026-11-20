@@ -17,17 +17,17 @@ En cada escenario, los dos cocineros reciben **la misma instancia** de `Inventar
 
 ## Sección crítica
 
-La sección crítica está identificada mediante comentarios en `_descontar_ingrediente()` y `_descontar_plato()`:
+La sección crítica está identificada mediante comentarios en `descontar_ingrediente()` y `descontar_plato()`:
 
 1. **Consultar** la cantidad disponible.
 2. **Validar** que alcanza para la reserva.
 3. **Actualizar** el recurso descontando la cantidad.
 
-Sin protección, ambos cocineros pueden observar una unidad disponible y confirmar dos reservas de esa misma unidad. En la prueba queda un inventario final de 0, pero **dos pedidos figuran atendidos**: eso es la inconsistencia. `GestorPedidos.obtener_pedido()` también protege mediante un bloqueo la asignación de cada pedido.
+Sin protección, ambos cocineros pueden observar una unidad disponible y confirmar dos reservas de esa misma unidad. En la prueba queda un inventario final de 0, pero **dos pedidos figuran atendidos**: eso es la inconsistencia. `GestorPedidos.tomar_pedido()` también protege mediante un bloqueo la asignación de cada pedido.
 
 ## Mecanismo elegido
 
-Se utiliza **mutex mediante `threading.Lock()`**. Se adquiere antes de consultar, validar y modificar el inventario, y se libera al salir de `with self.lock:`; no permanece adquirido durante la preparación del plato. También se protege la lista de pedidos.
+Se utiliza **mutex mediante `threading.Lock()`**. Se adquiere antes de consultar, validar y modificar el inventario, y se libera al salir de `with self.mutex:`; no permanece adquirido durante la preparación del plato. También se protege la lista de pedidos.
 
 Para reproducir el problema, **solo en las pruebas sin mutex sobre el inventario**, `threading.Barrier(2)` permite que los dos hilos lean antes de actualizar. La barrera es una ayuda para demostrar el error, no un reemplazo del mutex.
 
@@ -42,7 +42,7 @@ Para reproducir el problema, **solo en las pruebas sin mutex sobre el inventario
 
 ## Evidencia y ejecución
 
-El equipo ejecutó la versión final del Avance 1 en IntelliJ/PyCharm con el archivo local `Gestion De Pedidos.py` (publicado como `main.py` en GitHub). También puede ejecutarse desde consola con `python main.py`. La ejecución terminó con `Process finished with exit code 0`.
+El equipo ejecutó el Avance 1 en IntelliJ/PyCharm con el archivo local `Gestion De Pedidos.py` (publicado como `main.py` en GitHub). En esta actualización, las clases se distribuyen en `Inventario.py`, `Pedido.py`, `Gestor_Pedidos.py` y `Cocinero.py`, y el archivo principal únicamente configura y ejecuta los escenarios. También puede ejecutarse desde consola con `python main.py`. La ejecución terminó con `Process finished with exit code 0`.
 
 Se conserva la salida real proporcionada por el equipo en [evidencia_ejecucion.txt](evidencia_ejecucion.txt), incluyendo las cuatro pruebas y el código de salida 0. El orden de los mensajes y algunas líneas de impresión pueden variar por concurrencia.
 

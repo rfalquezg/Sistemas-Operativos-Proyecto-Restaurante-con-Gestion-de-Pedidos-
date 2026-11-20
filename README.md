@@ -83,7 +83,7 @@ inventario = {
 
 Se decidió utilizar el **diccionario (dict)** porque permite organizar mejor la información del inventario y facilitará las consultas y modificaciones de los recursos compartidos.
 
-Los ejemplos anteriores representan el diseño propuesto y todavía no constituyen la implementación completa del programa.
+Los ejemplos anteriores representan el diseño inicial; en el Avance 1 se implementaron las dos representaciones del inventario para realizar pruebas de sincronización.
 
 ### Clases propuestas
 
@@ -125,6 +125,10 @@ restaurante/
 ├── .gitignore
 ├── README.md
 ├── main.py
+├── Inventario.py
+├── Pedido.py
+├── Gestor_Pedidos.py
+├── Cocinero.py
 └── docs/
     ├── Restaurante con Gestión de Pedidos.pdf
     ├── Presentacion_Gestion de pedidos en Restaurantes.pptx
@@ -132,7 +136,7 @@ restaurante/
     └── evidencia_ejecucion.txt
 ```
 
-En IntelliJ/PyCharm, el archivo del ZIP se llama `Gestion De Pedidos.py`. Para mantener un punto de entrada sencillo en GitHub se publica como `main.py`, con las mismas clases y pruebas. Las carpetas locales `.venv/` y `.idea/` no se suben porque contienen configuraciones del entorno de desarrollo.
+En IntelliJ/PyCharm, el archivo principal del ZIP se llama `Gestion De Pedidos.py`. En GitHub, ese mismo archivo se llama `main.py` para facilitar su ejecución. Las clases están separadas en `Inventario.py`, `Pedido.py`, `Gestor_Pedidos.py` y `Cocinero.py`, tal como en el ZIP del proyecto. Las carpetas locales `.venv/` y `.idea/` no se suben porque contienen configuraciones del entorno de desarrollo.
 
 Esta estructura se actualizará conforme se incorporen más funcionalidades, pruebas y resultados del proyecto.
 
@@ -161,13 +165,13 @@ También se usan las clases **`Pedido`**, **`GestorPedidos`** y **`Cocinero`**. 
 
 ### Sección crítica
 
-La sección crítica está señalada con comentarios en los métodos **`_descontar_ingrediente()`** y **`_descontar_plato()`**. Contiene las operaciones de **consultar**, **validar** la disponibilidad y **actualizar** el recurso.
+La sección crítica está señalada con comentarios en los métodos **`descontar_ingrediente()`** y **`descontar_plato()`** de `Inventario.py`. Contiene las operaciones de **consultar**, **validar** la disponibilidad y **actualizar** el recurso.
 
 Sin sincronización, los dos cocineros pueden leer que hay una unidad disponible y ambos confirmar la reserva antes de que se actualice correctamente el inventario. En la prueba, el stock termina en cero, pero aparecen dos pedidos atendidos: esa es la inconsistencia.
 
 ### Mecanismo elegido
 
-Se utiliza **`threading.Lock()` (mutex)** porque la consulta, validación y actualización deben realizarse de forma exclusiva. El bloqueo se adquiere antes de estas operaciones y se libera al terminar el bloque `with self.lock:`. La lista de pedidos pendientes también se protege con un bloqueo.
+Se utiliza **`threading.Lock()` (mutex)** porque la consulta, validación y actualización deben realizarse de forma exclusiva. El bloqueo se adquiere antes de estas operaciones y se libera al terminar el bloque `with self.mutex:`. La lista de pedidos pendientes también se protege con un bloqueo.
 
 Para mostrar el conflicto de forma reproducible, **solo en la prueba sin mutex del inventario** se utiliza `threading.Barrier(2)`, que permite que los dos hilos lean antes de descontar. Esta barrera sirve para demostrar el error y no protege el inventario.
 
@@ -182,15 +186,19 @@ Para mostrar el conflicto de forma reproducible, **solo en la prueba sin mutex d
 
 ### Evidencia y ejecución
 
-El programa se ejecutó en IntelliJ/PyCharm y terminó con **exit code 0**. Desde una terminal también se puede ejecutar así:
+El proyecto organizado por archivos se ejecutó correctamente y terminó con **exit code 0**. La salida proporcionada por el equipo en IntelliJ/PyCharm corresponde a `Gestion De Pedidos.py`. Desde una terminal también se puede ejecutar así:
 
 ```bash
 python main.py
 ```
 
-La salida real compartida por el equipo confirma **2 reservas sin mutex** y **1 reserva con mutex** tanto para el pollo como para la lasaña preparada, con stock final de 0 en todas las pruebas. La consola terminó con `Process finished with exit code 0`. Como son hilos, el orden de los mensajes puede variar y algunas impresiones pueden aparecer juntas.
+La salida compartida por el equipo confirma **2 reservas sin mutex** y **1 reserva con mutex** tanto para el pollo como para la lasaña preparada, con stock final de 0 en todas las pruebas. La consola terminó con `Process finished with exit code 0`. El código organizado en archivos se verificó adicionalmente con los mismos resultados. Como son hilos, el orden de los mensajes puede variar.
 
-- [Código del primer avance](main.py)
+- [Archivo principal de las pruebas](main.py)
+- [Clase Inventario](Inventario.py)
+- [Clase Pedido](Pedido.py)
+- [Clase GestorPedidos](Gestor_Pedidos.py)
+- [Clase Cocinero](Cocinero.py)
 - [Documentación de la sección crítica y resultados](docs/avance_implementacion.md)
 - [Salida de ejecución compartida por el equipo](docs/evidencia_ejecucion.txt)
 

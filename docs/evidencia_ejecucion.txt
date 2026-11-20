@@ -1,45 +1,27 @@
---- BASICO / SIN LOCK ---
-[INICIO] Cocinero 1
-[INICIO] Cocinero 2
-Cocinero 2: pedido 2 atendidoCocinero 1: pedido 1 atendido
+C:\Users\Usuario\Downloads\Proyecto\Proyecto_gestion_restaurantes\.venv\Scripts\python.exe "C:\Users\Usuario\Downloads\Proyecto\Proyecto_gestion_restaurantes\Gestion De Pedidos.py"
 
-[FIN] Cocinero 2[FIN] Cocinero 1
+escenario 1: basico sin sincronizacion
+--- resultados ---
+reservas confirmadas: 2
+cantidad final: 0
+problema: se produjo una condicion de carrera.
 
-Reservas confirmadas: 2
-Cantidad final: 0
-PROBLEMA: dos cocineros reservaron la misma ultima unidad
+escenario 2: basico con sincronizacion
+--- resultados ---
+reservas confirmadas: 1
+cantidad final: 0
+correcto: no hubo reserva duplicada.
 
---- BASICO / CON LOCK ---
-[INICIO] Cocinero 1
-Cocinero 1: pedido 1 atendido
-[FIN] Cocinero 1
-[INICIO] Cocinero 2
-Cocinero 2: pedido 2 sin disponibilidad
-[FIN] Cocinero 2
-Reservas confirmadas: 1
-Cantidad final: 0
-CORRECTO: no hubo reserva duplicada
+escenario 3: complejo sin sincronizacion
+--- resultados ---
+reservas confirmadas: 2
+cantidad final: 0
+problema: se produjo una condicion de carrera.
 
---- COMPLEJO / SIN LOCK ---
-[INICIO] Cocinero 1
-[INICIO] Cocinero 2
-Cocinero 2: pedido 2 atendido
-[FIN] Cocinero 2
-Cocinero 1: pedido 1 atendido
-[FIN] Cocinero 1
-Reservas confirmadas: 2
-Cantidad final: 0
-PROBLEMA: dos cocineros reservaron la misma ultima unidad
-
---- COMPLEJO / CON LOCK ---
-[INICIO] Cocinero 1
-Cocinero 1: pedido 1 atendido
-[FIN] Cocinero 1
-[INICIO] Cocinero 2
-Cocinero 2: pedido 2 sin disponibilidad
-[FIN] Cocinero 2
-Reservas confirmadas: 1
-Cantidad final: 0
-CORRECTO: no hubo reserva duplicada
+escenario 4: complejo con sincronizacion
+--- resultados ---
+reservas confirmadas: 1
+cantidad final: 0
+correcto: no hubo reserva duplicada.
 
 Process finished with exit code 0
