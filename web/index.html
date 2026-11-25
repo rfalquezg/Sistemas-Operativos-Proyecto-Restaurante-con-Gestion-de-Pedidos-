@@ -1,75 +1,429 @@
+
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Restaurante · Laboratorio de concurrencia</title>
-  <link rel="stylesheet" href="/estilos.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#172334">
+    <title>Gestión de Pedidos · Estudio de concurrencia</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/estilos.css">
+    <script src="/interfaz.js" defer></script>
 </head>
 <body>
-  <main class="contenedor">
-    <header class="encabezado">
-      <span class="etiqueta">SISTEMAS OPERATIVOS · GRUPO 6</span>
-      <h1>Restaurante <span>con Gestión de Pedidos</span></h1>
-      <p>Laboratorio interactivo de hilos, recursos compartidos y sincronización con mutex.</p>
+<div class="app-shell">
+    <header class="masthead">
+        <a class="identity" href="#inicio">
+            <span class="logo">G<span class="logo-spark">✳</span></span>
+            <span class="identity-copy">
+        <strong>Gestión de Pedidos</strong>
+        <small>ESTUDIO DE CONCURRENCIA / GRUPO 6</small>
+      </span>
+        </a>
+
+
+
+        <div class="live-label">
+            <i></i> MOTOR PYTHON <span>· LOCAL</span>
+        </div>
     </header>
 
-    <section class="distribucion">
-      <form class="panel configuracion" id="formulario">
-        <div class="panel-titulo"><span>01</span><h2>Configura la simulación</h2></div>
-        <label>Representación del recurso
-          <select id="tipo">
-            <option value="basico">Básico · variable entera (pollo)</option>
-            <option value="complejo">Complejo · diccionario (lasaña)</option>
-          </select>
-        </label>
-        <label>Sincronización
-          <select id="mutex">
-            <option value="false">Sin mutex · condición de carrera</option>
-            <option value="true">Con mutex · Lock</option>
-          </select>
-        </label>
-        <label>Cantidad de cocineros (hilos)
-          <input id="cocineros" type="number" min="2" max="6" value="2">
-        </label>
-        <label>Stock inicial del recurso
-          <input id="stock" type="number" min="0" max="10" value="1">
-        </label>
-        <button class="boton principal" type="submit">▶ Ejecutar escenario</button>
-        <button class="boton secundario" type="button" id="comparar">Comparar las 4 versiones</button>
-        <p class="ayuda">Para observar la carrera, usa 2 cocineros y 1 unidad. La barrera solo reproduce el conflicto; el mutex es el mecanismo que lo evita.</p>
-      </form>
+    <main id="inicio">
 
-      <section class="panel resultado">
-        <div class="panel-titulo"><span>02</span><h2>Resultado del escenario</h2></div>
-        <div id="estado" class="estado neutro" role="status">Selecciona una configuración y ejecuta la prueba.</div>
-        <div class="numeros">
-          <div><span>Stock inicial</span><strong id="inicial">—</strong></div>
-          <div><span>Reservas</span><strong id="reservas">—</strong></div>
-          <div><span>Stock final</span><strong id="final">—</strong></div>
-        </div>
-        <div class="barra-titulo"><h3>Operaciones de los hilos</h3><small id="detalle">Consulta → validación → actualización</small></div>
-        <div class="tabla-scroll">
-          <table>
-            <thead><tr><th>Hilo</th><th>Operación solicitada</th><th>Antes</th><th>Resultado</th><th>Después</th></tr></thead>
-            <tbody id="movimientos"><tr><td colspan="5" class="vacio">Aquí aparecerá la ejecución.</td></tr></tbody>
-          </table>
-        </div>
-        <div class="info">
-          <strong>¿Qué significa?</strong>
-          <p id="explicacion">El recurso compartido debe descontarse una sola vez por cada reserva confirmada.</p>
-        </div>
-      </section>
-    </section>
+        <!-- PRESENTACION -->
+        <div class="intro-bar">
+            <div class="intro-copy">
+        <span class="overline">
+          <span class="overline-line"></span>
+          LABORATORIO INTERACTIVO
+        </span>
 
-    <section class="panel comparacion" id="comparacion" hidden>
-      <div class="panel-titulo"><span>03</span><h2>Comparación de las cuatro versiones</h2></div>
-      <p>Las cuatro pruebas usan la cantidad de cocineros y el stock que configuraste.</p>
-      <div class="tarjetas" id="tarjetas"></div>
-    </section>
+                <h1>Una cocina.<br><em>Muchos hilos.</em></h1>
 
-    <footer>Proyecto académico · UEES · Grupo 6 · Python y memoria compartida</footer>
-  </main>
-  <script src="/interfaz.js"></script>
+                <p>
+                    Mira cómo los cocineros compiten por un ingrediente
+                    y descubre qué cambia al activar el mutex.
+                </p>
+            </div>
+
+            <div class="intro-art" aria-hidden="true">
+                <div class="art-ring one"></div>
+                <div class="art-ring two"></div>
+                <div class="art-plate">🍽️</div>
+                <div class="art-chef chef-a">👨‍🍳</div>
+                <div class="art-chef chef-b">👩‍🍳</div>
+                <span class="art-caption">THREADS IN ACTION</span>
+            </div>
+        </div>
+
+        <!-- CONFIGURACION HORIZONTAL -->
+        <section class="control-deck">
+            <div class="deck-head">
+                <span class="micro">01 / PREPARAR LA PRUEBA</span>
+                <strong>Centro de control</strong>
+            </div>
+
+            <div class="deck-field version-field">
+                <label for="version">Escenario</label>
+                <select id="version">
+                    <option value="basico-false">🍗 Básico · Sin mutex</option>
+                    <option value="basico-true">🍗 Básico · Con mutex</option>
+                    <option value="complejo-false">🍝 Complejo · Sin mutex</option>
+                    <option value="complejo-true">🍝 Complejo · Con mutex</option>
+                </select>
+            </div>
+
+            <div class="deck-field">
+                <label for="stock">Unidades</label>
+                <input type="number" id="stock" min="0" max="10" value="1">
+            </div>
+
+            <div class="deck-field">
+                <label for="cocineros">Cocineros</label>
+                <input type="number" id="cocineros" min="2" max="6" value="2">
+            </div>
+
+            <button class="run-button" id="run">
+                <span>▶</span> Iniciar simulación
+            </button>
+        </section>
+
+        <div class="hint-row">
+            <span class="hint-icon">ⓘ</span>
+            <span id="scenario-tip">
+        Pollo como entero. Sin mutex, dos cocineros pueden
+        reservar la misma unidad.
+      </span>
+        </div>
+
+        <!-- INDICADORES -->
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-heading">
+                    <span>STOCK RESTANTE</span>
+                    <span class="metric-icon">▤</span>
+                </div>
+                <strong id="stat-stock">—</strong>
+                <small>unidades en inventario</small>
+            </div>
+
+            <div class="metric">
+                <div class="metric-heading">
+                    <span>RESERVAS</span>
+                    <span class="metric-icon">✓</span>
+                </div>
+                <strong id="stat-reservas">—</strong>
+                <small>confirmaciones registradas</small>
+            </div>
+
+            <div class="metric">
+                <div class="metric-heading">
+                    <span>RECHAZADOS</span>
+                    <span class="metric-icon">⊘</span>
+                </div>
+                <strong id="stat-rechazados">—</strong>
+                <small>sin disponibilidad</small>
+            </div>
+
+            <div class="metric metric-conflicts">
+                <div class="metric-heading">
+                    <span>CONFLICTOS</span>
+                    <span class="metric-icon">⚡</span>
+                </div>
+                <strong id="stat-conflictos">—</strong>
+                <small>actualizaciones inconsistentes</small>
+            </div>
+        </div>
+
+        <!-- COCINA -->
+        <section class="simulation">
+            <div class="simulation-head">
+                <div>
+                    <div class="micro">02 / EL EXPERIMENTO</div>
+                    <h2>La cocina en movimiento <span class="header-arrow">↗</span></h2>
+                </div>
+
+                <div class="status-panel">
+                    <span class="stage-status" id="run-status">En espera</span>
+                    <span id="mutex-status">○ Sin exclusión mutua</span>
+                </div>
+            </div>
+
+            <div class="workfloor">
+
+                <!-- ESTACION 1 -->
+                <div class="station orders-station">
+                    <div class="station-top">
+                        <span class="station-step">01</span>
+                        <div>
+                            <b>Pedidos entrantes</b>
+                            <small>COLA DE TRABAJO</small>
+                        </div>
+                    </div>
+
+                    <div class="orders-surface">
+                        <div class="order-list" id="order-list">
+                            <div class="empty-order">
+                                Aquí aparecerán los pedidos al ejecutar.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="station-foot">
+                        Cada cocinero recibe un pedido distinto.
+                    </div>
+                </div>
+
+                <!-- ESTACION 2 -->
+                <div class="station cook-station">
+                    <div class="station-top">
+                        <span class="station-step">02</span>
+                        <div>
+                            <b>Equipo de cocina</b>
+                            <small>HILOS EN EJECUCIÓN</small>
+                        </div>
+                    </div>
+
+                    <div class="cooks" id="cooks">
+                        <div class="placeholder">
+                            Los cocineros aparecerán aquí al iniciar la prueba.
+                        </div>
+                    </div>
+
+                    <div class="station-foot" id="cook-progress">
+                        0 cocineros activos
+                    </div>
+                </div>
+
+                <!-- ESTACION 3 -->
+                <div class="station pantry-station">
+                    <div class="station-top">
+                        <span class="station-step">03</span>
+                        <div>
+                            <b>Inventario</b>
+                            <small>MEMORIA COMPARTIDA</small>
+                        </div>
+                    </div>
+
+                    <div class="resource" id="resource-card">
+                        <span class="resource-emoji" id="resource-emoji">🍗</span>
+                        <strong class="resource-name" id="resource-name">Pollo</strong>
+                        <small class="resource-kind" id="resource-kind">
+                            variable int
+                        </small>
+
+                        <div class="resource-stock">
+                            <strong id="resource-count">1</strong>
+                            <span>UNIDADES</span>
+                        </div>
+
+                        <span class="resource-badge" id="resource-badge">
+              ● Disponible
+            </span>
+                    </div>
+
+                    <div class="station-foot" id="resource-description">
+                        Variable entera · pollo
+                    </div>
+                </div>
+
+                <!-- ESTACION 4 -->
+                <div class="station delivery-station">
+                    <div class="station-top">
+                        <span class="station-step">04</span>
+                        <div>
+                            <b>Despacho</b>
+                            <small>ENTREGA DE PLATOS</small>
+                        </div>
+                    </div>
+
+                    <div class="tray">
+                        <span class="tray-symbol">🍽️</span>
+                        <strong id="tray-count">0</strong>
+                        <small>reservas atendidas</small>
+                    </div>
+
+                    <div class="station-foot">
+                        Confirmaciones de los cocineros.
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCION CRITICA Y REPRODUCCION -->
+            <div class="runtime-panel">
+
+                <div class="critical-info" id="critical-info">
+                    <div class="runtime-symbol">🔐</div>
+
+                    <div class="critical-copy">
+                        <strong>Sección crítica</strong>
+                        <span id="critical-text">
+              Consulta, validación y actualización del recurso.
+            </span>
+                    </div>
+
+                    <span class="critical-lock" id="critical-lock">
+            🔓 Libre
+          </span>
+                </div>
+
+                <div class="playback-area">
+
+                    <div class="playback-top">
+
+                        <div class="speed-control">
+                            <label for="speed">Velocidad</label>
+
+                            <input
+                                    type="range"
+                                    class="range"
+                                    id="speed"
+                                    min="0.5"
+                                    max="3"
+                                    step="0.5"
+                                    value="1"
+                            >
+
+                            <span class="speed-value" id="speed-label">1×</span>
+                        </div>
+
+                        <label class="highlight-label" for="highlight">
+                            <input type="checkbox" id="highlight" checked>
+                            Resaltar sección crítica
+                        </label>
+
+                    </div>
+
+                    <div class="progress-line">
+                        <div class="progress">
+                            <div id="progress-fill"></div>
+                        </div>
+                        <span id="progress-label">Paso 0 / 0</span>
+                    </div>
+
+                    <div class="playback-actions">
+                        <button id="pause" disabled>Ⅱ Pausar</button>
+                        <button id="step" disabled>▷ Siguiente paso</button>
+                        <button id="restart" disabled>↻ Reiniciar</button>
+
+                        <p class="notice" id="notice" role="status">
+                            Listo para comenzar.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <span><i class="dot green"></i> Disponible</span>
+                <span><i class="dot blue"></i> Trabajando</span>
+                <span><i class="dot orange"></i> Conflicto</span>
+                <span><i class="dot gray"></i> Esperando</span>
+            </div>
+        </section>
+
+        <!-- REGISTRO -->
+        <section class="ledger" id="registro">
+            <div class="section-top">
+                <div>
+                    <div class="micro">03 / TRAZABILIDAD</div>
+                    <h2>Registro de operaciones</h2>
+                    <p>Consulta, validación y actualización, paso por paso.</p>
+                </div>
+
+                <button class="export-button" id="csv" disabled>
+                    ↓ Exportar CSV
+                </button>
+            </div>
+
+            <div class="table-scroller">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>NO.</th>
+                        <th>HILO</th>
+                        <th>OPERACIÓN</th>
+                        <th>ANTES</th>
+                        <th>RESULTADO</th>
+                        <th>DESPUÉS</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="log-body">
+                    <tr>
+                        <td colspan="6" class="table-empty">
+                            Inicia una simulación para ver las operaciones de Python.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="ledger-foot">
+                <span id="logs-count">0 operaciones registradas</span>
+                <span id="final-line">Estado final: —</span>
+            </div>
+        </section>
+
+        <!-- COMPARACION -->
+        <section class="compare-section" id="comparar">
+            <div class="section-top">
+                <div>
+                    <div class="micro">04 / ANÁLISIS</div>
+                    <h2>Cuatro versiones, una comparación</h2>
+                    <p>Dos tipos de recursos × dos modos de sincronización.</p>
+                </div>
+
+                <button id="compare-btn" class="export-button contrast">
+                    ▦ Comparar las 4 versiones
+                </button>
+            </div>
+
+            <div id="compare-grid" class="compare-grid">
+                <div class="compare-empty">
+                    Los cuatro resultados aparecerán aquí.
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPLICACION -->
+        <section class="learning" id="ayuda">
+            <div class="micro">FUNDAMENTOS DE SISTEMAS OPERATIVOS</div>
+            <h2>¿Qué ocurre dentro de esta cocina?</h2>
+
+            <div class="learn-grid">
+                <article>
+                    <div class="learn-glyph">01 / INT</div>
+                    <h3>Representación básica</h3>
+                    <p>
+                        El pollo se almacena en una variable entera.
+                        Los cocineros comparten esa misma cantidad.
+                    </p>
+                </article>
+
+                <article>
+                    <div class="learn-glyph">02 / DICT</div>
+                    <h3>Representación compleja</h3>
+                    <p>
+                        La lasaña preparada se guarda en un diccionario,
+                        separado del inventario de ingredientes.
+                    </p>
+                </article>
+
+                <article>
+                    <div class="learn-glyph">03 / LOCK</div>
+                    <h3>Exclusión mutua</h3>
+                    <p>
+                        El mutex protege consultar, validar y actualizar.
+                        Sin mutex puede haber reservas duplicadas.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <footer>
+            GESTIÓN DE PEDIDOS · GRUPO 6 · SISTEMAS OPERATIVOS
+        </footer>
+    </main>
+</div>
 </body>
 </html>

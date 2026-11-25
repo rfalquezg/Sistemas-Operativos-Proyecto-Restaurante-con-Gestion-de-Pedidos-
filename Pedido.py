@@ -6,6 +6,5 @@ class Pedido:
         self.cantidad = cantidad
         self.receta = receta or {}
         self.estado = "pendiente"
-
     def cambiar_estado(self, estado):
         self.estado = estado

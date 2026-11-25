@@ -1,8 +1,7 @@
-# Archivos locales de IntelliJ/PyCharm
-.idea/
 .venv/
-*.iml
-
-# Archivos generados por Python
+.idea/
 __pycache__/
 *.py[cod]
+*.iml
+.DS_Store
+.env
